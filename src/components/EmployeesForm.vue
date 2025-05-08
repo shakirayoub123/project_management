@@ -1,5 +1,16 @@
 <template>
   <div class="card card-primary">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <router-link to="/employees">Employees</router-link>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          {{ employee.id ? 'Edit Employee' : 'Create Employee' }}
+        </li>
+      </ol>
+    </nav>
     <div class="card-header">
       <h3 class="card-title">{{ employee.id ? 'Edit Employee' : 'Create Employee' }}</h3>
     </div>

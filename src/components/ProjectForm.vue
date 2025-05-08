@@ -1,12 +1,26 @@
 <template>
   <div class="card card-primary">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <router-link to="/projects">Projects</router-link>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          {{ formTitle }}
+        </li>
+      </ol>
+    </nav>
+
     <div class="card-header">
       <h3 class="card-title">{{ formTitle }}</h3>
     </div>
+
     <form @submit.prevent="submitForm">
       <div class="card-body">
         <div class="form-group">
-          <label for="projectName">Project Name <span class="text-danger">*</span></label>          <input type="text" class="form-control" id="projectName" v-model="project.name" />
+          <label for="projectName">Project Name <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="projectName" v-model="project.name" />
           <small v-if="errors.name" class="text-danger">{{ errors.name }}</small>
         </div>
 
@@ -151,5 +165,8 @@ export default {
 .text-danger {
   color: red;
   font-size: 0.875em;
+}
+.breadcrumb {
+  margin-bottom: 20px;
 }
 </style>

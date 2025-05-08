@@ -1,7 +1,19 @@
 <template>
   <div class="card card-primary">
+    <!-- Breadcrumbs Section -->
+    <div class="breadcrumb-wrapper mb-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">Employees</li>
+      </ol>
+    </div>
     <div class="card-header">
       <h3 class="card-title">All Employees</h3>
+      <!-- Add "Create Project" button -->
+      <router-link to="/employees/add">
+        <button class="btn btn-success btn-sm float-right" title="Create New Employee">
+          <i class="fas fa-plus"></i>
+        </button>
+      </router-link>
     </div>
     <div class="card-body p-0">
       <!-- Filters -->
@@ -41,6 +53,8 @@
       </div>
 
       <!-- Employee Table -->
+      <div class="table-responsive">
+
       <table class="table table-striped table-bordered m-0">
         <thead>
         <tr>
@@ -75,6 +89,7 @@
         </tr>
         </tbody>
       </table>
+      </div>
     </div>
   </div>
 </template>

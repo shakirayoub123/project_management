@@ -1,9 +1,25 @@
 <template>
   <div class="card card-primary">
+    <!-- Breadcrumbs Section -->
+    <div class="breadcrumb-wrapper mb-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">Projects</li>
+      </ol>
+    </div>
+
     <div class="card-header">
       <h3 class="card-title">All Projects</h3>
+      <!-- Add "Create Project" button -->
+      <router-link to="/projects/add">
+        <button class="btn btn-success btn-sm float-right" title="Create New Project">
+          <i class="fas fa-plus"></i>
+        </button>
+      </router-link>
+
       <button class="btn btn-success btn-sm float-right" @click="exportToExcel">Export to Excel</button>
+
     </div>
+
     <div class="card-body">
       <!-- Filters Section -->
       <div class="mb-3" v-if="projects.length > 0">
@@ -37,7 +53,6 @@
           Assign Projects
         </button>
       </div>
-
 
       <!-- Projects Table -->
       <div class="table-responsive">
