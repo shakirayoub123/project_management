@@ -1,4 +1,23 @@
-# project-dashboard
+# 📊 Project Management Dashboard
+
+A simple and functional **Vue 2** project that allows you to manage employees and assign them to multiple projects with deadlines, priorities, and persistent data via `localStorage`.
+
+---
+
+## 🚀 Features
+
+- Add, edit, and delete projects
+- Assign multiple employees to a project using multiselect
+- Set project deadlines and priorities
+- Form validation with error feedback
+- Data persistence using `localStorage`
+- Responsive UI (optional)
+- SweetAlert2 integration for success messages
+- Modular & reusable components
+
+---
+
+## 🛠️ Project Setup
 
 ## Project setup
 ```
