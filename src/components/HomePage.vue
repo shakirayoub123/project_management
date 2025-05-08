@@ -11,12 +11,6 @@
         <li class="nav-item d-none d-sm-inline-block">
           <router-link to="/" class="nav-link">Home</router-link>
         </li>
-<!--        <li class="nav-item d-none d-sm-inline-block">-->
-<!--          <router-link to="/projects" class="nav-link">Projects</router-link>-->
-<!--        </li>-->
-<!--        <li class="nav-item d-none d-sm-inline-block">-->
-<!--          <router-link to="/employees" class="nav-link">Employees</router-link>-->
-<!--        </li>-->
       </ul>
     </nav>
 
@@ -54,13 +48,13 @@
               <ul class="nav nav-treeview">
                 <li class="nav-item">
                   <router-link to="/projects/add" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
+                    <i class="nav-icon fas fa-plus"></i>
                     <p>Create</p>
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link to="/projects" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
+                    <i class="nav-icon fas fa-list"></i>
                     <p>List</p>
                   </router-link>
                 </li>
@@ -69,7 +63,7 @@
 
             <li class="nav-item has-treeview">
               <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-folder"></i>
+                <i class="nav-icon fas fa-users"></i>
                 <p>
                   Employees
                   <i class="right fas fa-angle-left"></i>
@@ -78,13 +72,13 @@
               <ul class="nav nav-treeview">
                 <li class="nav-item">
                   <router-link to="/employees/add" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
+                    <i class="nav-icon fas fa-plus"></i>
                     <p>Create</p>
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link to="/employees" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
+                    <i class="nav-icon fas fa-list"></i>
                     <p>List</p>
                   </router-link>
                 </li>

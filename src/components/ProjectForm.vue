@@ -1,18 +1,19 @@
 <template>
   <div class="card card-primary">
     <div class="card-header">
-      <h3 class="card-title">{{ project.id ? 'Edit Project' : 'Add New Project' }}</h3>
+      <h3 class="card-title">{{ formTitle }}</h3>
     </div>
     <form @submit.prevent="submitForm">
       <div class="card-body">
         <div class="form-group">
-          <label for="projectName">Project Name</label>
-          <input type="text" class="form-control" id="projectName" v-model="project.name" required />
+          <label for="projectName">Project Name <span class="text-danger">*</span></label>          <input type="text" class="form-control" id="projectName" v-model="project.name" />
+          <small v-if="errors.name" class="text-danger">{{ errors.name }}</small>
         </div>
 
         <div class="form-group">
-          <label for="deadline">Deadline</label>
-          <input type="date" class="form-control" id="deadline" v-model="project.deadline" required />
+          <label for="deadline">Deadline <span class="text-danger">*</span></label>
+          <input type="date" class="form-control" id="deadline" v-model="project.deadline" />
+          <small v-if="errors.deadline" class="text-danger">{{ errors.deadline }}</small>
         </div>
 
         <div class="form-group">
@@ -39,7 +40,7 @@
       </div>
 
       <div class="card-footer">
-        <button type="submit" class="btn btn-primary">{{ project.id ? 'Save Changes' : 'Create Project' }}</button>
+        <button type="submit" class="btn btn-primary">{{ buttonLabel }}</button>
       </div>
     </form>
   </div>
@@ -64,33 +65,50 @@ export default {
         priority: "Medium",
         assignedEmployees: []
       },
-      employeeList: []
+      employeeList: [],
+      errors: {
+        name: '',
+        deadline: ''
+      }
     };
   },
+  computed: {
+    formTitle() {
+      return this.project.id ? 'Edit Project' : 'Add New Project';
+    },
+    buttonLabel() {
+      return this.project.id ? 'Save Changes' : 'Create Project';
+    }
+  },
   mounted() {
-    // Check if we're editing an existing project
+    // Load employee list
+    const storedEmployees = JSON.parse(localStorage.getItem("employees")) || [];
+    this.employeeList = storedEmployees;
+
+    // Load existing project if editing
     if (this.$route.params.id) {
       const storedProjects = JSON.parse(localStorage.getItem("projects")) || [];
       const project = storedProjects.find(p => p.id === parseInt(this.$route.params.id));
       if (project) {
-        this.project = { ...project }; // Pre-fill form fields for editing
+        this.project = { ...project };
       }
     }
-
-    // Load employee list for the multiselect component
-    const storedEmployees = JSON.parse(localStorage.getItem("employees")) || [];
-    this.employeeList = storedEmployees;
   },
   methods: {
     submitForm() {
+      // Reset validation errors
+      this.errors.name = this.project.name ? '' : 'Project name is required.';
+      this.errors.deadline = this.project.deadline ? '' : 'Deadline is required.';
+
+      // Stop submission if there are errors
+      if (this.errors.name || this.errors.deadline) return;
+
       const storedProjects = JSON.parse(localStorage.getItem("projects")) || [];
 
       if (this.project.id) {
-        // Edit existing project
+        // Update existing
         const index = storedProjects.findIndex(p => p.id === this.project.id);
-        if (index !== -1) {
-          storedProjects[index] = { ...this.project }; // Update project
-        }
+        if (index !== -1) storedProjects[index] = { ...this.project };
 
         Swal.fire({
           icon: 'success',
@@ -100,9 +118,9 @@ export default {
           showConfirmButton: false
         });
       } else {
-        // Add new project
-        this.project.id = Date.now(); // Unique ID for the new project
-        storedProjects.push(this.project);
+        // Create new
+        this.project.id = Date.now();
+        storedProjects.push({ ...this.project });
 
         Swal.fire({
           icon: 'success',
@@ -113,21 +131,25 @@ export default {
         });
       }
 
-      // Save projects to localStorage
+      // Save to localStorage
       localStorage.setItem("projects", JSON.stringify(storedProjects));
 
-      // Redirect to project list after a brief delay to show the SweetAlert
+      // Redirect after a short delay
       setTimeout(() => {
         this.$router.push("/projects");
       }, 1600);
 
-      // Clear the form for new project creation
-      this.project = { name: "", deadline: "", priority: "Medium", assignedEmployees: [] };
+      // Reset form
+      this.project = { id: null, name: "", deadline: "", priority: "Medium", assignedEmployees: [] };
+      this.errors = { name: '', deadline: '' };
     }
   }
 };
 </script>
 
 <style scoped>
-/* Optional styling */
+.text-danger {
+  color: red;
+  font-size: 0.875em;
+}
 </style>

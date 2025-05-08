@@ -6,21 +6,26 @@
     <form @submit.prevent="submitForm">
       <div class="card-body">
         <div class="form-group">
-          <label for="employeeName">Name</label>
-          <input type="text" id="employeeName" v-model="employee.name" class="form-control" required />
+          <label for="employeeName">Name <span class="text-danger">*</span></label>
+          <input type="text" id="employeeName" v-model="employee.name" class="form-control" />
+          <small v-if="errors.name" class="text-danger">{{ errors.name }}</small>
         </div>
 
         <div class="form-group">
-          <label for="employeeEmail">Email</label>
-          <input type="email" id="employeeEmail" v-model="employee.email" class="form-control" required />
+          <label for="employeeEmail">Email <span class="text-danger">*</span></label>
+          <input type="email" id="employeeEmail" v-model="employee.email" class="form-control" />
+          <small v-if="errors.email" class="text-danger">{{ errors.email }}</small>
         </div>
 
         <div class="form-group">
-          <label for="employeePosition">Position</label>
-          <input type="text" id="employeePosition" v-model="employee.position" class="form-control" required />
+          <label for="employeePosition">Position <span class="text-danger">*</span></label>
+          <input type="text" id="employeePosition" v-model="employee.position" class="form-control" />
+          <small v-if="errors.position" class="text-danger">{{ errors.position }}</small>
         </div>
 
-        <button type="submit" class="btn btn-primary">{{ employee.id ? 'Save Changes' : 'Create Employee' }}</button>
+        <button type="submit" class="btn btn-primary">
+          {{ employee.id ? 'Save Changes' : 'Create Employee' }}
+        </button>
       </div>
     </form>
   </div>
@@ -39,27 +44,47 @@ export default {
         email: '',
         position: '',
       },
+      errors: {
+        name: '',
+        email: '',
+        position: ''
+      }
     };
   },
   mounted() {
-    // If there's an 'id' in the route parameters, pre-fill the form for editing
     if (this.$route.params.id) {
       const employees = JSON.parse(localStorage.getItem("employees")) || [];
       const employee = employees.find(emp => emp.id === parseInt(this.$route.params.id));
       if (employee) {
-        this.employee = { ...employee }; // Pre-fill form fields
+        this.employee = { ...employee };
       }
     }
   },
   methods: {
     submitForm() {
+      // Reset validation
+      this.errors = { name: '', email: '', position: '' };
+
+      if (!this.employee.name) {
+        this.errors.name = 'Name is required.';
+      }
+      if (!this.employee.email) {
+        this.errors.email = 'Email is required.';
+      }
+      if (!this.employee.position) {
+        this.errors.position = 'Position is required.';
+      }
+
+      if (this.errors.name || this.errors.email || this.errors.position) {
+        return;
+      }
+
       const employees = JSON.parse(localStorage.getItem("employees")) || [];
 
       if (this.employee.id) {
-        // Editing an existing employee
         const index = employees.findIndex(emp => emp.id === this.employee.id);
         if (index !== -1) {
-          employees[index] = { ...this.employee }; // Update employee
+          employees[index] = { ...this.employee };
         }
 
         Swal.fire({
@@ -69,9 +94,8 @@ export default {
           confirmButtonText: 'OK'
         });
       } else {
-        // Creating a new employee
-        this.employee.id = Date.now(); // Assign a unique ID
-        employees.push(this.employee); // Add new employee
+        this.employee.id = Date.now();
+        employees.push(this.employee);
 
         Swal.fire({
           title: 'Success!',
@@ -81,30 +105,20 @@ export default {
         });
       }
 
-      // Save changes to localStorage
       localStorage.setItem("employees", JSON.stringify(employees));
-      // Redirect back to the employee list
+
       setTimeout(() => {
         this.$router.push('/employees');
       }, 1600);
 
-      // Reset the form
-      this.employee = { name: '', email: '', position: '' };
-    },
-  },
+      this.employee = { id: null, name: '', email: '', position: '' };
+    }
+  }
 };
 </script>
 
 <style scoped>
-.employee-form {
-  max-width: 600px;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-button {
-  margin-top: 1rem;
+.text-danger {
+  font-size: 0.875em;
 }
 </style>
