@@ -43,15 +43,20 @@
 
       <!-- Employee Assignment Section -->
       <div class="mb-3 d-flex align-items-center gap-2" v-if="selectedProjects.length > 0">
-        <select class="form-control mr-2" v-model="selectedEmployeeId">
-          <option disabled value="">Select Employee</option>
-          <option v-for="employee in employees" :key="employee.id" :value="employee.id">
-            {{ employee.name }}
-          </option>
-        </select>
-        <button class="btn btn-primary btn-sm" @click="assignEmployeeToSelected" :disabled="!selectedEmployeeId">
+        <Multiselect
+            v-model="selectedEmployees"
+            :options="employees"
+            :multiple="true"
+            :track-by="'id'"
+            label="name"
+            placeholder="Select Employees"
+            class="form-control mr-2"
+        ></Multiselect>
+
+        <button class="btn btn-primary btn-sm" @click="assignEmployeeToSelected" :disabled="selectedEmployees.length === 0">
           Assign Projects
         </button>
+
       </div>
 
       <!-- Projects Table -->
@@ -111,6 +116,7 @@
 <script>
 import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
+import Multiselect from 'vue-multiselect'
 
 export default {
   name: 'ProjectList',
@@ -123,6 +129,7 @@ export default {
       selectedProjects: [], // Selected project IDs for bulk actions
       selectedEmployeeId: '', // Selected employee for assignment
       selectAll: false, // Select all checkbox status
+      selectedEmployees: [],
       employees: [
         { id: 1, name: 'Alice' },
         { id: 2, name: 'Bob' },
@@ -130,6 +137,7 @@ export default {
       ]
     };
   },
+  components :{Multiselect},
   mounted() {
     const storedProjects = JSON.parse(localStorage.getItem('projects')) || [];
 
@@ -164,60 +172,44 @@ export default {
       }
     },
     assignEmployeeToSelected() {
-      // Check if any projects are selected
-      if (this.selectedProjects.length === 0) {
+      if (this.selectedProjects.length === 0 || this.selectedEmployees.length === 0) {
         Swal.fire({
           icon: 'warning',
-          title: 'No projects selected!',
-          text: 'Please select at least one project to assign the employee.',
+          title: 'Missing selection!',
+          text: 'Please select at least one project and one or more employees.',
           timer: 1500,
           showConfirmButton: false
         });
         return;
       }
 
-      // Find the selected employee
-      const selectedEmp = this.employees.find(e => e.id === this.selectedEmployeeId);
-      if (!selectedEmp) {
-        Swal.fire({
-          icon: 'error',
-          title: 'No employee selected!',
-          text: 'Please select an employee to assign.',
-          timer: 1500,
-          showConfirmButton: false
-        });
-        return;
-      }
-
-      // Iterate over selected projects and assign the employee
       this.projects.forEach(project => {
         if (this.selectedProjects.includes(project.id)) {
-          // Ensure assignedEmployees is an array
           project.assignedEmployees = Array.isArray(project.assignedEmployees) ? project.assignedEmployees : [];
 
-          // Only assign if the employee is not already assigned
-          if (!project.assignedEmployees.some(emp => emp.id === selectedEmp.id)) {
-            project.assignedEmployees.push({ id: selectedEmp.id, name: selectedEmp.name });
-          }
+          this.selectedEmployees.forEach(emp => {
+            if (!project.assignedEmployees.some(e => e.id === emp.id)) {
+              project.assignedEmployees.push({ id: emp.id, name: emp.name });
+            }
+          });
         }
       });
 
-      // Save to localStorage and update UI
       localStorage.setItem('projects', JSON.stringify(this.projects));
       this.filterProjects();
       this.selectedProjects = [];
       this.selectAll = false;
-      this.selectedEmployeeId = '';
+      this.selectedEmployees = [];
 
-      // Show success message
       Swal.fire({
         icon: 'success',
-        title: 'Employee Assigned',
-        text: 'Selected projects have been updated.',
+        title: 'Employees Assigned',
+        text: 'Selected employees have been assigned to the selected projects.',
         timer: 1500,
         showConfirmButton: false
       });
-    },
+    }
+    ,
     toggleProjectStatus(project) {
       project.status = project.status === 'Completed' ? 'Not Completed' : 'Completed';
       localStorage.setItem('projects', JSON.stringify(this.projects));
